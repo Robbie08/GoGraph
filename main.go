@@ -30,8 +30,33 @@ func (g *Graph) addVertex(k int){
     }
 }
 // Add Edge
+func (g *Graph) addEdge(from, to int){
+    // get vertex
+    fromVertex := g.getVertex(from) // get address of the from vertex
+    toVertex := g.getVertex(to) // get the address of the to vertex
 
+    // check error - if edge exists already, or add edge to non-existent vertex
+    if fromVertex == nil || toVertex == nil{
+        err := fmt.Errorf("Oops! Invalid edge (%v ->% v)", from, to)
+        fmt.Println(err.Error())
+    } else if contains(fromVertex.adjacent, to){
+        err :=  fmt.Errorf("Oops! Existing edge (%v -> %v)", from, to)
+        fmt.Println(err.Error())
+    }else{
+        // add edge
+        fromVertex.adjacent = append(fromVertex.adjacent, toVertex)
+    }
+}
 // getVertex
+func (g *Graph) getVertex(k int) *Vertex {
+    var vertex *Vertex
+    for i, v := range g.vertices {
+        if v.key == k {
+            vertex = g.vertices[i]
+        }
+    }
+    return vertex
+}
 // contains
 func contains(s []*Vertex, k int) bool {
     for _,v := range s{
@@ -58,6 +83,11 @@ func main(){
     for i := 0; i < 5; i++ {
         test.addVertex(i)
     }
-    test.addVertex(1)
+
+    test.addEdge(1,2)
+    test.addEdge(1,3)
+    test.addEdge(1,3)
+    test.addEdge(2,3)
+    test.addEdge(4,8)
     test.Print()
 }
