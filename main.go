@@ -13,6 +13,9 @@ type Graph struct{
 // Vertex Structure - represents graph vertex
 type Vertex struct{
     key int
+    color int
+    dist int
+    parent *Vertex
     adjacent []*Vertex
 }
 
@@ -57,6 +60,7 @@ func (g *Graph) getVertex(k int) *Vertex {
     }
     return vertex
 }
+
 // contains
 func contains(s []*Vertex, k int) bool {
     for _,v := range s{
@@ -66,6 +70,44 @@ func contains(s []*Vertex, k int) bool {
     }
     return false
 }
+
+func (g *Graph) DFS(s *Vertex) {
+
+    for _, v := range g.vertices{
+        for _, v:= range v.adjacent{
+            if v != s{
+                v.color = 0
+                v.dist = -1
+                v.parent = nil
+            }
+        }
+    }
+
+    s.color = 1
+    s.dist = 0
+    s.parent = nil
+
+    queue := make([]*Vertex, 0) // create and init our queue
+    queue = append(queue, s) // append s into the queue
+
+    for len(queue) != 0 {
+        u := queue[0]  // keep the vertex at top of queue
+        queue = queue[1:] // remove value from queue
+
+        for _, v:= range u.adjacent{
+            if v.color == 0{
+                v.color = 1
+                v.dist = u.dist + 1
+                v.parent = u
+                queue = append(queue, v)
+            }
+        }
+        fmt.Print(" ",u.key)
+        u.color = 2
+    }
+
+}
+
 // print contects of the list
 func (g *Graph) Print() {
     for _, v := range g.vertices {
@@ -80,14 +122,15 @@ func (g *Graph) Print() {
 func main(){
     test := &Graph{}
 
-    for i := 0; i < 5; i++ {
+    for i := 0; i < 7; i++ {
         test.addVertex(i)
     }
 
     test.addEdge(1,2)
     test.addEdge(1,3)
-    test.addEdge(1,3)
     test.addEdge(2,3)
-    test.addEdge(4,8)
-    test.Print()
+    test.addEdge(3,4)
+    test.addEdge(2,5)
+    test.addEdge(5,6)
+    test.DFS(test.getVertex(1))
 }
